@@ -1,0 +1,13 @@
+#!/bin/sh
+# NetworkManager dispatcher: act only on physical Wi-Fi/Ethernet events.
+case "${2:-}" in
+    up|dhcp4-change|reapply) ;;
+    *) exit 0 ;;
+esac
+case "${1:-}" in
+    ''|*/*) exit 0 ;;
+esac
+[ -e "/sys/class/net/$1/device" ] || exit 0
+# Let the dispatcher return immediately; systemd prevents parallel executions
+# of the same repair unit. No Amnezia process/service is stopped or restarted.
+exec /usr/bin/systemctl start --no-block amnezia-route-repair.service

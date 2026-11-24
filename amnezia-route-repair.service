@@ -1,0 +1,16 @@
+[Unit]
+Description=Recover AmneziaWG endpoint route, stale binding and cached VPN DNS after network recovery
+After=NetworkManager.service systemd-resolved.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 -I /usr/local/libexec/amnezia-route-repair.py --repair --watch-seconds 60 --refresh-endpoint --restore-dns
+TimeoutStartSec=90
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+CapabilityBoundingSet=CAP_NET_ADMIN
+RuntimeDirectory=amnezia-route-repair
+RuntimeDirectoryMode=0700
+RuntimeDirectoryPreserve=yes
